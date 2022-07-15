@@ -7,6 +7,7 @@ const { response } = require('express');
 app.use(express.json())
 
 //res.json or res.send are required for all express requests
+//this is just a get route to practice mapping over the request body (object) and return an array with objects
 app.get('/', function(req, res, next) {
     try {
         let developers = req.body.developers
@@ -22,10 +23,17 @@ app.get('/', function(req, res, next) {
 
 app.post('/', function(req, res, next) {
     try {
-        let results = req.body.developers.map(async d => await axios.get(`https://api.github.com/users/${d}`))
-        let newPromise = Promise.all(results)
+        // take the body of the request and find an array labeled 'developers'
+        // then map the array of developers to an array of objects and store it in a variable called 'results'
 
+        let results = req.body.developers.map(async d => await axios.get(`https://api.github.com/users/${d}`))
+        // use the Promise.all function to wait for all the requests to finish and store the results in a variable called 'newPromise'
+        let newPromise = Promise.all(results)
+        // use the .then function to wait for the newPromise to finish and then send the results to the client
         newPromise.then(result => {
+            // res.json is required for any express request 
+            // then we use the map function to map the array of results to an array of objects
+            // the schema must be precise in the front end -- you may need to console.log the results
             res.json(result.map(devs =>[{
 
                 bio: devs.data.bio,
