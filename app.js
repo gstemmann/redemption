@@ -7,31 +7,31 @@ const { response } = require('express');
 app.use(express.json())
 
 //res.json or res.send are required for all express requests
-// app.post('/', function(req, res, next) {
-//     try {
-//         let results = req.body
-//         let developers = results.developers
-//             res.json(
-//                 developers.map(d => [{
-//                     name: d
-//                 }]))
-//         }
-//     catch (err) {
-//         next(err);
-//     }
-// })
+app.get('/', function(req, res, next) {
+    try {
+        let developers = req.body.developers
+            res.json(
+                developers.map(d => [{
+                    name: d
+                }]))
+        }
+    catch (err) {
+        next(err);
+    }
+})
 
 app.post('/', function(req, res, next) {
     try {
         let results = req.body.developers.map(async d => await axios.get(`https://api.github.com/users/${d}`))
         let newPromise = Promise.all(results)
+
         newPromise.then(result => {
             res.json(result.map(devs =>[{
+
                 bio: devs.data.bio,
                 name: devs.data.name
-                }]))
-            
 
+                }]))
     })
 }
     catch (err) {
